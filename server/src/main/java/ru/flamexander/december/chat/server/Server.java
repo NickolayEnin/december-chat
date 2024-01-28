@@ -45,7 +45,7 @@ public class Server {
     }
 
     public synchronized void unsubscribe(ClientHandler clientHandler) {
-        clients.remove(clientHandler);
+        clients.remove(clientHandler.getUsername(),clientHandler);
         System.out.println("Отключился клиент " + clientHandler.getUsername());
     }
 
