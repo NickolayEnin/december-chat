@@ -34,7 +34,9 @@ public class ClientHandler {
                             break;
                         }
                         if (message.startsWith("/w ")) {
-                            // TODO homework
+                            String [] splitMessage = message.split(" ", 3);
+                            server.sendPrivateMessage(this, splitMessage[1], splitMessage[2]);
+                            continue;
                         }
                     }
                     server.broadcastMessage(username + ": " + message);

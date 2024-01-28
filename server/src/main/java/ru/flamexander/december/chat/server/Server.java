@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Server {
     private int port;
-    private List<ClientHandler> clients;
+    private Map<String ,ClientHandler> clients;
 
     public Server(int port) {
         this.port = port;
-        this.clients = new ArrayList<>();
+        this.clients = new HashMap<>();
     }
 
     public void start() {
@@ -32,13 +34,13 @@ public class Server {
     }
 
     public synchronized void broadcastMessage(String message) {
-        for (ClientHandler clientHandler : clients) {
+        for (ClientHandler clientHandler : clients.values()) {
             clientHandler.sendMessage(message);
         }
     }
 
     public synchronized void subscribe(ClientHandler clientHandler) {
-        clients.add(clientHandler);
+        clients.put(clientHandler.getUsername(), clientHandler);
         System.out.println("Подключился новый клиент " + clientHandler.getUsername());
     }
 
@@ -48,6 +50,11 @@ public class Server {
     }
 
     public synchronized void sendPrivateMessage(ClientHandler sender, String receiverUsername, String message) {
-        // TODO homework
+        for (Map.Entry<String, ClientHandler> entry : clients.entrySet()){
+            if (entry.getKey().equals(receiverUsername)){
+                sender.sendMessage("wisp:" + receiverUsername + ": " + message);
+                entry.getValue().sendMessage("wisp:" + sender.getUsername() + ": " + message);
+            }
+        }
     }
 }
